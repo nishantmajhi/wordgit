@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WordGit</title>
+    <script
+      src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+      type="text/javascript"
+    ></script>
+    <link rel="stylesheet" href="taskpane.css" />
+    <style>
+      /*
+       * Button colours live here, not in taskpane.css.
+       *
+       * Why: office.js injects its own Fabric stylesheet into the page after
+       * all <link> stylesheets have loaded, resetting button colours. A <style>
+       * block in <head> is part of the document cascade and always wins over
+       * any externally injected stylesheet - no !important needed.
+       *
+       * Button roles:
+       *   btn-primary  - solid blue  - ONE main action per panel
+       *   btn-refresh  - blue outline, inverts on hover - frequent secondary action
+       *   btn-secondary- gray        - low-priority actions
+       *   btn-danger   - solid red   - destructive/document-replacing actions
+       */
+
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 8px 14px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+        border: 1.5px solid transparent;
+        transition:
+          background-color 0.15s,
+          color 0.15s,
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      .btn-primary {
+        background-color: #0078d4;
+        color: #ffffff;
+        border-color: #0078d4;
+      }
+      .btn-primary:hover {
+        background-color: #005fa3;
+        border-color: #005fa3;
+      }
+      .btn-primary:active {
+        background-color: #004f8f;
+        border-color: #004f8f;
+      }
+
+      .btn-refresh {
+        background-color: #ffffff;
+        color: #0078d4;
+        border-color: #0078d4;
+      }
+      .btn-refresh:hover {
+        background-color: #0078d4;
+        color: #ffffff;
+        border-color: #0078d4;
+      }
+      .btn-refresh:active {
+        background-color: #005fa3;
+        color: #ffffff;
+        border-color: #005fa3;
+      }
+
+      .btn-secondary {
+        background-color: #eeeeee;
+        color: #1a1a1a;
+        border-color: #d0d0d0;
+      }
+      .btn-secondary:hover {
+        background-color: #e0e0e0;
+        border-color: #bdbdbd;
+      }
+      .btn-secondary:active {
+        background-color: #d4d4d4;
+      }
+
+      .btn-danger {
+        background-color: #c4262e;
+        color: #ffffff;
+        border-color: #c4262e;
+      }
+      .btn-danger:hover {
+        background-color: #a31f26;
+        border-color: #a31f26;
+      }
+      .btn-danger:active {
+        background-color: #8c1a20;
+        border-color: #8c1a20;
+      }
+
+      .tab-btn.active {
+        background-color: rgba(0, 120, 212, 0.08);
+      }
+
+      body.wg-dark .btn-refresh {
+        background-color: transparent;
+        color: #4db6ff;
+        border-color: #4db6ff;
+      }
+      body.wg-dark .btn-refresh:hover {
+        background-color: #4db6ff;
+        color: #000000;
+      }
+      body.wg-dark .btn-secondary {
+        background-color: #2d2d2d;
+        color: #ececec;
+        border-color: #3a3a3a;
+      }
+      body.wg-dark .btn-secondary:hover {
+        background-color: #383838;
+      }
+      body.wg-dark .btn-danger {
+        background-color: #c4262e;
+        color: #ffffff;
+      }
+      body.wg-dark .btn-danger:hover {
+        background-color: #a31f26;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toast-container"></div>
+    <div id="app">
+      <div id="tabs">
+        <button class="tab-btn active" data-tab="commit">💾 Commit</button>
+        <button class="tab-btn" data-tab="log">📜 Log</button>
+        <button class="tab-btn" data-tab="branches">🌿 Branches</button>
+      </div>
+
+      <!-- COMMIT panel -->
+      <div id="panel-commit" class="panel active">
+        <div class="panel-body">
+          <!-- "Commit" section label removed - tab name already says so -->
+          <label class="wg-label" for="commit-msg">Message (optional)</label>
+          <input
+            class="wg-input"
+            type="text"
+            id="commit-msg"
+            placeholder="e.g. Draft intro section"
+            disabled
+          />
+          <button class="btn btn-primary" id="btn-commit" disabled>Commit</button>
+          <button class="btn btn-secondary" id="btn-init">⚙️ Init repo</button>
+        </div>
+      </div>
+
+      <!-- LOG panel -->
+      <div id="panel-log" class="panel">
+        <div class="panel-body">
+          <p class="wg-section">History</p>
+          <button class="btn btn-refresh" id="btn-refresh-log">Refresh</button>
+          <ul id="log-list">
+            <li class="wg-hint">No history loaded yet.</li>
+          </ul>
+        </div>
+        <div class="panel-footer">
+          <button class="btn btn-secondary" id="btn-export-json" style="margin: 0">
+            Export history as JSON
+          </button>
+        </div>
+      </div>
+
+      <!-- BRANCHES panel
+           Order (top → bottom):
+           1. Create branch (label + input + button)
+           2. divider
+           3. Branches (refresh → branch list)
+           4. Commit graph (rendered below list after Refresh)
+      -->
+      <div id="panel-branches" class="panel">
+        <div class="panel-body">
+          <!-- Create branch - top of panel -->
+          <p class="wg-section">Create branch</p>
+          <label class="wg-label" for="new-branch-name">Branch name</label>
+          <input
+            class="wg-input"
+            type="text"
+            id="new-branch-name"
+            placeholder="e.g. draft-chapter-2"
+          />
+          <button class="btn btn-primary" id="btn-create-branch">Create branch</button>
+
+          <hr class="wg-divider" />
+
+          <!-- Branch list -->
+          <p class="wg-section">Branches</p>
+          <button class="btn btn-refresh" id="btn-refresh-branches">Refresh</button>
+          <div id="branch-list"></div>
+
+          <!-- Commit graph (Phase 7)
+               - No border/bg until JS adds .has-graph class
+               - "No commits yet." shown as plain hint text, not inside styled container
+               - SVG injected here after Refresh; container gets .has-graph class -->
+          <div id="branch-graph"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

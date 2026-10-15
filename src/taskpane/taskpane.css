@@ -1,0 +1,453 @@
+/* ============================================================
+   WordGit - taskpane.css
+   Layout, components, design tokens only.
+   Button colours are intentionally in taskpane.html <style>
+   block - see CRITICAL pitfalls section for why.
+   ============================================================ */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --wg-bg: #f5f5f5;
+  --wg-surface: #ffffff;
+  --wg-surface-alt: #fafafa;
+  --wg-surface-btn: #eeeeee;
+  --wg-border: #e0e0e0;
+  --wg-border-input: #c8c8c8;
+  --wg-text: #1a1a1a;
+  --wg-text-muted: #6b6b6b;
+  --wg-text-faint: #a0a0a0;
+  --wg-accent: #0078d4;
+  --wg-accent-dark: #005fa3;
+  --wg-accent-glow: rgba(0, 120, 212, 0.12);
+  --wg-accent-text: #004f8f;
+  --wg-danger: #c4262e;
+  --wg-warn-bg: #fff8e1;
+  --wg-warn-border: #f0b400;
+  --wg-warn-text: #5c3d00;
+}
+
+body {
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--wg-bg);
+  color: var(--wg-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.panel {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.panel.active {
+  display: flex;
+}
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+.panel-footer {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  background: var(--wg-surface);
+  border-top: 1px solid var(--wg-border);
+}
+
+#tabs {
+  display: flex;
+  flex-shrink: 0;
+  background: var(--wg-surface);
+  border-bottom: 2px solid var(--wg-accent);
+}
+.tab-btn {
+  flex: 1;
+  padding: 10px 4px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--wg-text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s;
+}
+.tab-btn:hover {
+  color: var(--wg-accent);
+}
+.tab-btn.active {
+  color: var(--wg-accent);
+  font-weight: 600;
+  border-bottom-color: var(--wg-accent);
+}
+
+.wg-section {
+  margin: 0 0 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--wg-text-muted);
+}
+.wg-divider {
+  border: none;
+  border-top: 1px solid var(--wg-border);
+  margin: 14px 0;
+}
+.wg-hint {
+  font-size: 11px;
+  color: var(--wg-text-faint);
+  margin-bottom: 8px;
+}
+.wg-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wg-text-muted);
+}
+
+.wg-input {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--wg-surface);
+  color: var(--wg-text);
+  border: 1px solid var(--wg-border-input);
+  border-radius: 4px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.wg-input::placeholder {
+  color: var(--wg-text-faint);
+}
+.wg-input:hover:not(:disabled) {
+  border-color: #a8a8a8;
+}
+.wg-input:focus {
+  outline: none;
+  border-color: var(--wg-accent);
+  box-shadow: 0 0 0 3px var(--wg-accent-glow);
+}
+.wg-input:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  background: var(--wg-bg);
+}
+
+#log-list {
+  margin: 0;
+  padding: 0;
+}
+
+.log-card {
+  border: 1px solid var(--wg-border);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  background: var(--wg-surface);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.log-card.expanded {
+  border-color: var(--wg-border);
+}
+
+.log-summary {
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.log-summary:hover {
+  background: var(--wg-accent-glow);
+}
+
+.log-chevron {
+  font-size: 9px;
+  color: var(--wg-text-faint);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.log-card.expanded .log-chevron {
+  transform: rotate(90deg);
+  color: var(--wg-accent);
+}
+
+.log-hash {
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 11px;
+  color: var(--wg-text-muted);
+  flex-shrink: 0;
+  background: var(--wg-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--wg-border);
+}
+.log-msg {
+  font-weight: 600;
+  font-size: 12px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.log-detail {
+  display: none;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--wg-border);
+  background: var(--wg-surface-alt);
+}
+.log-card.expanded .log-detail {
+  display: block;
+}
+
+.log-detail-meta {
+  font-size: 11px;
+  color: var(--wg-text-muted);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.log-detail-meta code {
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 10px;
+  background: var(--wg-bg);
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid var(--wg-border);
+}
+
+.log-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+.log-actions .btn {
+  flex: 1;
+  margin: 0;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+.card-confirm {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--wg-warn-bg);
+  border: 1px solid var(--wg-warn-border);
+  border-radius: 5px;
+}
+.card-confirm.visible {
+  display: block;
+}
+.card-confirm-msg {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wg-warn-text);
+  margin-bottom: 8px;
+}
+.card-confirm-btns {
+  display: flex;
+  gap: 6px;
+}
+.card-confirm-btns .btn {
+  flex: 1;
+  margin: 0;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+/* ── Branch graph container ──────────────────────────────────────────────────
+   Default: plain, no box. JS adds .has-graph class once SVG is rendered,
+   which applies the border/background styling.
+   The "No commits yet." plain-text state is just a .wg-hint, no container styling.
+   ─────────────────────────────────────────────────────────────────────────── */
+#branch-graph {
+  /* plain by default - no border, no background, no padding */
+}
+#branch-graph.has-graph {
+  margin-top: 12px;
+  border: 1px solid var(--wg-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--wg-surface);
+  padding: 8px 4px;
+}
+
+.branch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--wg-border);
+  font-size: 12px;
+  background: var(--wg-surface);
+  transition: background 0.12s;
+}
+.branch-row:last-child {
+  border-bottom: none;
+}
+.branch-row:hover {
+  background: var(--wg-accent-glow);
+}
+.branch-row.active {
+  background: rgba(0, 120, 212, 0.1);
+  font-weight: 600;
+}
+
+#branch-list {
+  border: 1px solid var(--wg-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+#branch-list:empty {
+  display: none;
+}
+
+.branch-name {
+  flex: 1;
+}
+.branch-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--wg-accent);
+  background: var(--wg-accent-glow);
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 120, 212, 0.25);
+  flex-shrink: 0;
+}
+.branch-row .btn {
+  width: auto;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+#toast-container {
+  position: fixed;
+  bottom: 12px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 9999;
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-size: 12px;
+  line-height: 1.4;
+  pointer-events: all;
+  animation: toast-in 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.toast-out {
+  animation: toast-out 0.2s ease forwards;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.toast-success {
+  background: #f0faf0;
+  border-color: #107c10;
+  color: #0a4f0a;
+}
+.toast-error {
+  background: #fdf0f0;
+  border-color: #c4262e;
+  color: #6b0000;
+}
+.toast-warning {
+  background: var(--wg-warn-bg);
+  border-color: var(--wg-warn-border);
+  color: var(--wg-warn-text);
+}
+.toast-info {
+  background: #f0f6ff;
+  border-color: #0078d4;
+  color: #003f73;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.toast-msg {
+  flex: 1;
+}
+.toast-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 2px;
+  color: inherit;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.toast-close:hover {
+  opacity: 1;
+}

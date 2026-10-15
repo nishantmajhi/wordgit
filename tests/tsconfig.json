@@ -1,0 +1,21 @@
+{
+  // Compiles the add-in's TypeScript to plain CommonJS under tests/build/ so
+  // `node --test` can require it. The app itself is bundled by webpack and does
+  // not use this; it exists only so the tests exercise the real source rather
+  // than a transcription of it.
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["es2020", "dom"],
+    "types": ["office-js", "node"],
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "outDir": "build",
+    "rootDir": "../src",
+    "sourceMap": true
+  },
+  "include": ["../src/**/*.ts"]
+}
